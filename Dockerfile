@@ -5,7 +5,7 @@
 #
 
 # Build the membarrier check tool.
-FROM alpine:3.14 AS membarrier
+FROM alpine:3.22 AS membarrier
 WORKDIR /tmp
 COPY membarrier_check.c .
 RUN apk --no-cache add build-base linux-headers
@@ -13,13 +13,13 @@ RUN gcc -static -o membarrier_check membarrier_check.c
 RUN strip membarrier_check
 
 # Pull base image.
-FROM jlesage/baseimage-gui:alpine-3.21-v4.7.1
+FROM jlesage/baseimage-gui:alpine-3.22-v4.7.1
 
 # Docker image version is provided via build arg.
 ARG DOCKER_IMAGE_VERSION=
 
 # Define software versions.
-ARG FIREFOX_VERSION=136.0.4-r0
+ARG FIREFOX_VERSION=latest
 #ARG PROFILE_CLEANER_VERSION=2.36
 
 # Define software download URLs.
@@ -28,12 +28,11 @@ ARG FIREFOX_VERSION=136.0.4-r0
 # Define working directory.
 WORKDIR /tmp
 
-# Install Firefox.
+# Install Firefox (latest from edge).
 RUN \
-#    add-pkg --repository http://dl-cdn.alpinelinux.org/alpine/edge/main \
-#            --repository http://dl-cdn.alpinelinux.org/alpine/edge/community \
-#            --upgrade firefox=${FIREFOX_VERSION}
-     add-pkg firefox=${FIREFOX_VERSION}
+    add-pkg --repository http://dl-cdn.alpinelinux.org/alpine/edge/main \
+            --repository http://dl-cdn.alpinelinux.org/alpine/edge/community \
+            firefox
 
 # Install extra packages.
 RUN \
